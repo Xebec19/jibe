@@ -11,8 +11,9 @@ import (
 var once sync.Once
 
 type Config struct {
-	Port string `json:"port"`
-	Env  string `json:"env"`
+	Port    string `json:"port"`
+	Env     string `json:"env"`
+	Version string `json:"version"`
 }
 
 var config *Config
@@ -24,8 +25,9 @@ func setupConfig() {
 	}
 
 	config = &Config{
-		Port: os.Getenv("PORT"),
-		Env:  os.Getenv("ENV"),
+		Port:    os.Getenv("PORT"),
+		Env:     os.Getenv("ENV"),
+		Version: os.Getenv("VERSION"),
 	}
 }
 
