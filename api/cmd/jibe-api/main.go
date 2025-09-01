@@ -1,9 +1,11 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 	"os/signal"
 
+	"github.com/Xebec19/jibe/api/internal/lib/environment"
 	"github.com/Xebec19/jibe/api/internal/pkg/logger"
 	"github.com/Xebec19/jibe/api/internal/server"
 )
@@ -11,6 +13,11 @@ import (
 func main() {
 
 	srv := server.NewServer()
+
+	if environment.IsDevEnvironment() || true {
+		config := environment.GetConfig()
+		logger.Info("Configuration", slog.Any("config", config))
+	}
 
 	go func() {
 		err := srv.StartServer()

@@ -3,20 +3,18 @@ package logger
 import (
 	"log/slog"
 	"os"
-
-	"github.com/Xebec19/jibe/api/internal/lib/environment"
 )
 
 var log *slog.Logger
 
 func init() {
-	isDev := environment.IsDevEnvironment()
+	// isDev := environment.IsDevEnvironment()
 
-	if isDev {
-		Init(slog.LevelDebug, "text")
-	} else {
-		Init(slog.LevelError, "json")
-	}
+	// if isDev {
+	Init(slog.LevelDebug, "text")
+	// } else {
+	// 	Init(slog.LevelError, "json")
+	// }
 }
 
 // Init sets up the default logger for the app.

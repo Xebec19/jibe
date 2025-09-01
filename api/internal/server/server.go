@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -23,7 +24,6 @@ type API struct {
 
 func (s *API) StartServer() error {
 	logger.Info("Starting Server")
-
 	// Start server in a goroutine
 	return s.srv.ListenAndServe()
 }
@@ -54,7 +54,7 @@ func NewServer() Server {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         config.Port,
+		Addr:         fmt.Sprintf(":%s", config.Port),
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
