@@ -1,5 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function Navbar() {
   return (
@@ -12,7 +13,10 @@ export function Navbar() {
               href="/"
               className="text-xl font-bold text-foreground hover:text-accent transition-colors"
             >
-              Web3 Profile
+              <Avatar>
+                <AvatarImage src="./logo.webp" alt="jibe logo" />
+                <AvatarFallback>Jibe</AvatarFallback>
+              </Avatar>
             </Link>
           </div>
 
