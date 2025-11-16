@@ -1,13 +1,10 @@
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { WagmiProvider } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, base } from "wagmi/chains";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
 import WagmiRBKitProvider from "@/context/wagmi-rbkit.provider";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,8 +17,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jibe",
+  title: "Jibe - Web3 Content Platform",
   description: "Web3 Based Token Gated Platform | Jibe",
+  icons: {
+    icon: [
+      {
+        url: "/favicon-32x32.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/favicon-32x32.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/logo.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -35,8 +49,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <WagmiRBKitProvider>
-          <Navbar />
+          <Header />
           {children}
+          <Footer />
         </WagmiRBKitProvider>
       </body>
     </html>
