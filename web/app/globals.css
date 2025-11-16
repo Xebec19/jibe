@@ -4,79 +4,81 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Vibrant color palette matching the pinwheel logo */
+  /* Vibrant color palette matching the pinwheel logo with improved contrast */
   /* Logo colors: Turquoise (#1DD3C7), Blue (#5B9BF3), Yellow (#FFB800), Pink (#FF6B8A) */
-  --background: oklch(0.99 0.005 240);
-  --foreground: oklch(0.14 0.02 240);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.14 0.02 240);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.14 0.02 240);
-  --primary: oklch(0.75 0.15 195); /* Vibrant Turquoise - main brand color */
-  --primary-foreground: oklch(0.08 0.02 240);
-  --secondary: oklch(0.65 0.18 250); /* Blue accent */
-  --secondary-foreground: oklch(0.99 0 0);
-  --muted: oklch(0.96 0.005 240);
-  --muted-foreground: oklch(0.58 0.01 240);
-  --accent: oklch(0.75 0.15 195); /* Turquoise accent */
-  --accent-foreground: oklch(0.08 0.02 240);
-  --destructive: oklch(0.577 0.245 27.325);
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.1 0.01 240); /* Darker text for better contrast */
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.1 0.01 240);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.1 0.01 240);
+  --primary: oklch(
+    0.58 0.18 195
+  ); /* Darker turquoise for better contrast on light bg */
+  --primary-foreground: oklch(0.99 0 0); /* White text on primary */
+  --secondary: oklch(0.52 0.2 250); /* Darker blue for better contrast */
+  --secondary-foreground: oklch(0.99 0 0); /* White text on secondary */
+  --muted: oklch(0.94 0.005 240);
+  --muted-foreground: oklch(0.45 0.01 240); /* Darker muted text */
+  --accent: oklch(0.58 0.18 195); /* Darker turquoise accent */
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.5 0.22 27); /* Darker red for contrast */
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.94 0.005 240);
-  --input: oklch(0.94 0.005 240);
-  --ring: oklch(0.75 0.15 195);
-  /* Chart colors using all logo colors */
-  --chart-1: oklch(0.75 0.15 195); /* Turquoise */
-  --chart-2: oklch(0.65 0.18 250); /* Blue */
-  --chart-3: oklch(0.78 0.16 95); /* Yellow */
-  --chart-4: oklch(0.7 0.2 10); /* Pink/Coral */
-  --chart-5: oklch(0.68 0.14 160); /* Lighter cyan */
+  --border: oklch(0.88 0.005 240); /* More visible borders */
+  --input: oklch(0.88 0.005 240);
+  --ring: oklch(0.58 0.18 195);
+  /* Chart colors using all logo colors - adjusted for contrast */
+  --chart-1: oklch(0.55 0.18 195); /* Turquoise */
+  --chart-2: oklch(0.52 0.2 250); /* Blue */
+  --chart-3: oklch(0.62 0.18 95); /* Yellow (darker) */
+  --chart-4: oklch(0.58 0.22 10); /* Pink/Coral */
+  --chart-5: oklch(0.5 0.16 180); /* Cyan */
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.005 240);
-  --sidebar-foreground: oklch(0.145 0.02 240);
-  --sidebar-primary: oklch(0.75 0.15 195);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.75 0.15 195);
-  --sidebar-accent-foreground: oklch(0.08 0.02 240);
-  --sidebar-border: oklch(0.922 0.005 240);
-  --sidebar-ring: oklch(0.75 0.15 195);
+  --sidebar: oklch(0.97 0 0);
+  --sidebar-foreground: oklch(0.1 0.01 240);
+  --sidebar-primary: oklch(0.58 0.18 195);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.01 195); /* Lighter accent bg */
+  --sidebar-accent-foreground: oklch(0.1 0.01 240);
+  --sidebar-border: oklch(0.88 0.005 240);
+  --sidebar-ring: oklch(0.58 0.18 195);
 }
 
 .dark {
-  /* Dark mode with vibrant neon accents - perfect for Web3 */
-  --background: oklch(0.08 0.015 240); /* Deep dark blue-black */
-  --foreground: oklch(0.98 0.005 240);
-  --card: oklch(0.12 0.015 240); /* Slightly lighter than background */
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.12 0.015 240);
-  --popover-foreground: oklch(0.98 0.005 240);
-  --primary: oklch(0.78 0.17 195); /* Brighter turquoise for dark mode */
-  --primary-foreground: oklch(0.08 0.015 240);
-  --secondary: oklch(0.68 0.2 250); /* Brighter blue */
-  --secondary-foreground: oklch(0.12 0.015 240);
-  --muted: oklch(0.22 0.015 240);
-  --muted-foreground: oklch(0.7 0.01 240);
-  --accent: oklch(0.78 0.17 195); /* Bright turquoise accent */
-  --accent-foreground: oklch(0.08 0.015 240);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.2 0.015 240);
-  --input: oklch(0.2 0.015 240);
-  --ring: oklch(0.78 0.17 195);
-  /* Chart colors - vibrant for dark mode */
-  --chart-1: oklch(0.78 0.17 195); /* Bright Turquoise */
-  --chart-2: oklch(0.68 0.2 250); /* Bright Blue */
-  --chart-3: oklch(0.8 0.18 95); /* Bright Yellow */
-  --chart-4: oklch(0.72 0.22 10); /* Bright Pink */
-  --chart-5: oklch(0.7 0.16 160); /* Bright Cyan */
-  --sidebar: oklch(0.1 0.015 240);
-  --sidebar-foreground: oklch(0.985 0.005 240);
-  --sidebar-primary: oklch(0.78 0.17 195);
-  --sidebar-primary-foreground: oklch(0.985 0.005 240);
-  --sidebar-accent: oklch(0.78 0.17 195);
-  --sidebar-accent-foreground: oklch(0.985 0.005 240);
-  --sidebar-border: oklch(0.18 0.015 240);
-  --sidebar-ring: oklch(0.78 0.17 195);
+  /* Dark mode with enhanced contrast - perfect for Web3 */
+  --background: oklch(0.1 0.01 240); /* Darker background for better contrast */
+  --foreground: oklch(0.95 0.005 240); /* Brighter text */
+  --card: oklch(0.15 0.01 240); /* Clearer card separation */
+  --card-foreground: oklch(0.95 0.005 240);
+  --popover: oklch(0.15 0.01 240);
+  --popover-foreground: oklch(0.95 0.005 240);
+  --primary: oklch(0.75 0.2 195); /* Bright turquoise with high saturation */
+  --primary-foreground: oklch(0.1 0.01 240); /* Dark text on bright primary */
+  --secondary: oklch(0.68 0.22 250); /* Bright blue */
+  --secondary-foreground: oklch(0.1 0.01 240);
+  --muted: oklch(0.25 0.01 240); /* More visible muted backgrounds */
+  --muted-foreground: oklch(0.65 0.01 240); /* Lighter muted text */
+  --accent: oklch(0.75 0.2 195); /* Bright turquoise accent */
+  --accent-foreground: oklch(0.1 0.01 240);
+  --destructive: oklch(0.6 0.24 27); /* Brighter red for visibility */
+  --destructive-foreground: oklch(0.95 0.005 240);
+  --border: oklch(0.3 0.01 240); /* More visible borders */
+  --input: oklch(0.2 0.01 240); /* Darker input backgrounds */
+  --ring: oklch(0.75 0.2 195);
+  /* Chart colors - high contrast for dark mode */
+  --chart-1: oklch(0.75 0.2 195); /* Bright Turquoise */
+  --chart-2: oklch(0.68 0.22 250); /* Bright Blue */
+  --chart-3: oklch(0.78 0.2 95); /* Bright Yellow */
+  --chart-4: oklch(0.72 0.24 10); /* Bright Pink */
+  --chart-5: oklch(0.7 0.18 180); /* Bright Cyan */
+  --sidebar: oklch(0.12 0.01 240); /* Darker sidebar */
+  --sidebar-foreground: oklch(0.95 0.005 240);
+  --sidebar-primary: oklch(0.75 0.2 195);
+  --sidebar-primary-foreground: oklch(0.1 0.01 240);
+  --sidebar-accent: oklch(0.25 0.02 195); /* Subtle accent bg */
+  --sidebar-accent-foreground: oklch(0.95 0.005 240);
+  --sidebar-border: oklch(0.25 0.01 240); /* More visible sidebar borders */
+  --sidebar-ring: oklch(0.75 0.2 195);
 }
 
 @theme inline {
