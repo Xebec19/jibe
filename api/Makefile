@@ -1,4 +1,4 @@
-.PHONY: help run build test clean dev install fmt lint docker-build docker-run
+.PHONY: help run build test clean dev install fmt lint docker-build docker-run postgres createdb dropdb migrateup migratedown
 
 # Default target
 help:
@@ -65,3 +65,18 @@ docker-run:
 install-tools:
 	go install github.com/air-verse/air@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+postgres:
+	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+
+createdb:
+	docker exec -it postgres12 createdb jibe
+
+dropdb:
+	docker exec -it postgres12 dropdb jibe
+
+migrateup:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/jibe?sslmode=disable" -verbose up
+
+migratedown:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/jibe?sslmode=disable" -verbose down
