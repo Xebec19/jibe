@@ -20,6 +20,7 @@ type Container struct {
 
 	// Services
 	UserService service.UserService
+	AuthService service.AuthService
 
 	// Resilience
 	CircuitBreaker *resilience.CircuitBreaker
@@ -49,18 +50,18 @@ func New(cfg *config.Config, log *logger.Logger) *Container {
 func (c *Container) initResilience() {
 	// Circuit breaker configuration
 	c.CircuitBreaker = resilience.NewCircuitBreaker(
-		5,   // Max failures before opening
-		10,  // Timeout in seconds
-		30,  // Reset timeout in seconds
+		5,  // Max failures before opening
+		10, // Timeout in seconds
+		30, // Reset timeout in seconds
 		c.Logger,
 	)
 
 	// Retry policy configuration
 	c.RetryPolicy = resilience.NewRetryPolicy(
-		3,     // Max retries
-		100,   // Initial backoff in ms
-		2.0,   // Backoff multiplier
-		5000,  // Max backoff in ms
+		3,    // Max retries
+		100,  // Initial backoff in ms
+		2.0,  // Backoff multiplier
+		5000, // Max backoff in ms
 		c.Logger,
 	)
 }
@@ -77,6 +78,7 @@ func (c *Container) initRepositories() {
 // initServices initializes all services
 func (c *Container) initServices() {
 	c.UserService = service.NewUserService(c.UserRepository, c.Logger)
+	c.AuthService = service.NewAuthService(c.Logger)
 
 	c.Logger.Info().Msg("Services initialized")
 }
