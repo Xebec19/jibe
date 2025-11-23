@@ -33,5 +33,8 @@ migrateup:
 migratedown:
 	migrate -path db/migrations -database "postgresql://root:secret@localhost:5432/jibe?sslmode=disable" -verbose down
 
+sqlc:
+	sqlc generate
+
 .PHONY:
-	help dev
+	help dev build test-coverage clean postgres createdb dropdb migrateup migratedown sqlc
