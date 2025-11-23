@@ -3,9 +3,9 @@ package logger
 import "log/slog"
 
 type Logger interface {
-	Info(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
+	Info(msg string, args ...interface{})
+	Warn(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
 }
 
 func NewLogger(level slog.Level) Logger {
@@ -21,14 +21,14 @@ type log struct {
 	log *slog.Logger
 }
 
-func (l log) Info(args ...interface{}) {
-	l.log.Info("DEBUG", args...)
+func (l log) Info(msg string, args ...interface{}) {
+	l.log.Info(msg, args...)
 }
 
-func (l log) Warn(args ...interface{}) {
-	l.log.Warn("WARN", args...)
+func (l log) Warn(msg string, args ...interface{}) {
+	l.log.Warn(msg, args...)
 }
 
-func (l log) Error(args ...interface{}) {
-	l.log.Error("ERROR", args...)
+func (l log) Error(msg string, args ...interface{}) {
+	l.log.Error(msg, args...)
 }

@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	dbConn string `mapstructure:"DB_CONN"`
-	env    string `mapstructure:"ENV"`
+	Port   string `mapstructure:"PORT"`
+	DbConn string `mapstructure:"DB_CONN"`
+	Env    string `mapstructure:"ENV"`
 }
 
 func NewConfig(path string) (*Config, error) {
@@ -19,7 +20,8 @@ func NewConfig(path string) (*Config, error) {
 	}
 
 	return &Config{
-		dbConn: os.Getenv("DB_CONN"),
-		env:    os.Getenv("ENV"),
+		DbConn: os.Getenv("DB_CONN"),
+		Env:    os.Getenv("ENV"),
+		Port:   os.Getenv("PORT"),
 	}, nil
 }

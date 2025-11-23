@@ -7,17 +7,14 @@ import (
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
 
-type Container interface {
-}
-
 func NewContainer(cfg *config.Config, logger logger.Logger) Container {
-	return container{
-		cfg:    *cfg,
-		logger: logger,
+	return Container{
+		Cfg:    *cfg,
+		Logger: logger,
 	}
 }
 
-type container struct {
-	cfg    config.Config
-	logger logger.Logger
+type Container struct {
+	Cfg    config.Config
+	Logger logger.Logger
 }
