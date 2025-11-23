@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -9,13 +10,27 @@ import (
 	"time"
 
 	"github.com/Xebec19/jibe/api/internal/server"
+	"github.com/Xebec19/jibe/api/pkg/config"
 )
 
 func main() {
 
-	srv, err := server.NewServer()
+	envPath := flag.String("env", "../../.env", "path to env file")
+	flag.Parse()
+
+	cfg, err := config.NewConfig(*envPath)
 	if err != nil {
-		panic(err)
+		slog.Error("Config is invalid", "error", err)
+		os.Exit(1)
+	}
+
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
+
+	srv, err := server.NewServer(ctx, cfg)
+	if err != nil {
+		cancelFunc()
+		os.Exit(1)
 	}
 
 	serverErrors := make(chan error, 1)
@@ -30,12 +45,16 @@ func main() {
 
 	select {
 	case err := <-serverErrors:
+		cancelFunc()
 		slog.Error("Server threw an error", "error", err)
+
+	case <-ctx.Done():
+		slog.Info("Context cancelled")
 
 	case <-shutdown:
 		slog.Error("Program cancelled")
 
-		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 		defer cancel()
 
 		if err := srv.Shutdown(ctx); err != nil {

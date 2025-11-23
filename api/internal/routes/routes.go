@@ -11,4 +11,5 @@ func RegisterRoutes(r *mux.Router, c container.Container) {
 	r.Use(middleware.HttpLogger(c.Logger))
 
 	registerHealthRoutes(r, c)
+	registerAuthRoutes(r, c)
 }

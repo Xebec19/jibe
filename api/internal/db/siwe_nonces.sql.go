@@ -11,9 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createNonce = `-- name: CreateNonce :exec
+const createNonce = `-- name: CreateNonce :one
 INSERT INTO siwe_nonces(value, eth_address, expires_at) 
-values($1, $2, $3)
+values($1, $2, $3) RETURNING value
 `
 
 type CreateNonceParams struct {
@@ -22,7 +22,9 @@ type CreateNonceParams struct {
 	ExpiresAt  pgtype.Timestamp
 }
 
-func (q *Queries) CreateNonce(ctx context.Context, arg CreateNonceParams) error {
-	_, err := q.db.Exec(ctx, createNonce, arg.Value, arg.EthAddress, arg.ExpiresAt)
-	return err
+func (q *Queries) CreateNonce(ctx context.Context, arg CreateNonceParams) (string, error) {
+	row := q.db.QueryRow(ctx, createNonce, arg.Value, arg.EthAddress, arg.ExpiresAt)
+	var value string
+	err := row.Scan(&value)
+	return value, err
 }
