@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { CustomConnectButton } from "../connect-button";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,9 +39,10 @@ export function Header() {
           </Link>
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* <div className="hidden md:flex items-center gap-3">
           <Button className="border-foreground/20">Connect Wallet</Button>
-        </div>
+        </div> */}
+        <CustomConnectButton />
 
         <button
           className="md:hidden"

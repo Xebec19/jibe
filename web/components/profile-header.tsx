@@ -1,3 +1,5 @@
+"use client";
+
 export function ProfileHeader() {
   return (
     <header className="border-b border-border bg-card">
@@ -16,5 +18,5 @@ export function ProfileHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }
