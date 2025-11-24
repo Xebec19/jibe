@@ -1,5 +1,5 @@
 package domain
 
 type CreateNonceDTO struct {
-	Addr string
+	Eth_Addr string `json:"eth_addr"`
 }

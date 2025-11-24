@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/Xebec19/jibe/api/internal/repositories"
+	"github.com/Xebec19/jibe/api/internal/layers/repositories"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
 

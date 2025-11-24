@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/Xebec19/jibe/api/internal/services"
+	"github.com/Xebec19/jibe/api/internal/layers/services"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
 

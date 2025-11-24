@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Xebec19/jibe/api/internal/container"
 	"github.com/Xebec19/jibe/api/internal/db"
+	"github.com/Xebec19/jibe/api/internal/layers/container"
 	"github.com/Xebec19/jibe/api/internal/routes"
 	"github.com/Xebec19/jibe/api/pkg/config"
 	"github.com/Xebec19/jibe/api/pkg/logger"

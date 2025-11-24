@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/Xebec19/jibe/api/internal/container"
+	"github.com/Xebec19/jibe/api/internal/layers/container"
 	"github.com/Xebec19/jibe/api/internal/middleware"
 	"github.com/gorilla/mux"
 )

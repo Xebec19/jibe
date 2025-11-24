@@ -6,8 +6,8 @@ import (
 	"context"
 
 	"github.com/Xebec19/jibe/api/internal/db"
-	"github.com/Xebec19/jibe/api/internal/repositories"
-	"github.com/Xebec19/jibe/api/internal/services"
+	"github.com/Xebec19/jibe/api/internal/layers/repositories"
+	"github.com/Xebec19/jibe/api/internal/layers/services"
 	"github.com/Xebec19/jibe/api/pkg/config"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
