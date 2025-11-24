@@ -45,7 +45,7 @@ func (repo *authRepository) CreateNonce(addr string) (string, error) {
 
 	params := db.CreateNonceParams{
 		Value:      nonce,
-		EthAddress: pgtype.Text{String: addr, Valid: false},
+		EthAddress: pgtype.Text{String: addr, Valid: true},
 		ExpiresAt: pgtype.Timestamp{
 			Time:  expireAt,
 			Valid: true,

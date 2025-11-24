@@ -5,6 +5,7 @@ package container
 import (
 	"context"
 
+	"github.com/Xebec19/jibe/api/internal/common/schema"
 	"github.com/Xebec19/jibe/api/internal/db"
 	"github.com/Xebec19/jibe/api/internal/layers/repositories"
 	"github.com/Xebec19/jibe/api/internal/layers/services"
@@ -14,21 +15,26 @@ import (
 )
 
 func NewContainer(ctx context.Context, cfg *config.Config, logger logger.Logger, dbpool *pgxpool.Pool, q *db.Queries) Container {
+
+	validator := schema.GetSchemaValidator()
+
 	return Container{
-		Ctx:     ctx,
-		Cfg:     *cfg,
-		Logger:  logger,
-		Dbpool:  dbpool,
-		Queries: q,
+		Ctx:       ctx,
+		Cfg:       *cfg,
+		Logger:    logger,
+		Dbpool:    dbpool,
+		Queries:   q,
+		Validator: validator,
 	}
 }
 
 type Container struct {
-	Ctx     context.Context
-	Cfg     config.Config
-	Logger  logger.Logger
-	Dbpool  *pgxpool.Pool
-	Queries *db.Queries
+	Ctx       context.Context
+	Cfg       config.Config
+	Logger    logger.Logger
+	Dbpool    *pgxpool.Pool
+	Queries   *db.Queries
+	Validator schema.RequestValidator
 
 	// Repositories
 	AuthRepository repositories.AuthRepository

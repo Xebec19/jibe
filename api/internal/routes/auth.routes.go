@@ -8,7 +8,7 @@ import (
 
 func registerAuthRoutes(r *mux.Router, c container.Container) {
 
-	authController := controllers.NewAuthController(&c.Logger, c.AuthService)
+	authController := controllers.NewAuthController(&c.Logger, c.Validator, c.AuthService)
 
 	authApi := r.PathPrefix("/v1/auth").Subrouter()
 

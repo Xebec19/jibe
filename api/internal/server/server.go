@@ -56,6 +56,8 @@ func NewServer(ctx context.Context, cfg *config.Config) (*Server, error) {
 
 func (s *Server) Run() error {
 
+	s.Container.Logger.Info("Server started", "PORT", s.Container.Cfg.Port)
+
 	return s.Srv.ListenAndServe()
 }
 

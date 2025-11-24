@@ -5,6 +5,15 @@ import (
 	"net/http"
 )
 
+const (
+	// success messages
+	RESOURCE_CREATED_MSG string = "resource created successfully"
+
+	// error messages
+	INVALID_REQUEST_MSG      string = "invalid request"
+	SOMETHING_WENT_WRONG_MSG string = "something went wrong"
+)
+
 type Response struct {
 	Status  bool
 	Message string

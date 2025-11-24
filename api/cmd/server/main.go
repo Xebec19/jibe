@@ -36,7 +36,6 @@ func main() {
 	serverErrors := make(chan error, 1)
 
 	go func() {
-		slog.Info("Starting Server")
 		serverErrors <- srv.Run()
 	}()
 
