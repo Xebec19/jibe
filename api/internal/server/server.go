@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/Xebec19/jibe/api/internal/db"
 	"github.com/Xebec19/jibe/api/internal/layers/container"
@@ -41,11 +40,12 @@ func NewServer(ctx context.Context, cfg *config.Config) (*Server, error) {
 	routes.RegisterRoutes(r, c)
 
 	srv := &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      r,
-		ReadTimeout:  time.Duration(60 * time.Second),
-		WriteTimeout: time.Duration(60 * time.Second),
-		IdleTimeout:  time.Duration(60 * time.Second),
+		Addr:           ":" + cfg.Port,
+		Handler:        r,
+		ReadTimeout:    cfg.ReadTimeout,
+		WriteTimeout:   cfg.WriteTimeout,
+		IdleTimeout:    cfg.IdleTimeout,
+		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
 	return &Server{
