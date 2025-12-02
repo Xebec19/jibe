@@ -2,25 +2,29 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/Xebec19/jibe/api/internal/common/dto"
 	"github.com/Xebec19/jibe/api/internal/common/schema"
 	"github.com/Xebec19/jibe/api/internal/layers/domain"
 	"github.com/Xebec19/jibe/api/internal/layers/services"
+	"github.com/Xebec19/jibe/api/pkg/config"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
 
 type AuthController interface {
+	// GenerateNonce returns a random nonce and also save it in db with expiry
 	GenerateNonce(w http.ResponseWriter, r *http.Request)
+	// VerifyHandler verifies the message and signature generated during SIWE
+	VerifyHandler(w http.ResponseWriter, r *http.Request)
 }
 
-func NewAuthController(logger *logger.Logger, validator schema.RequestValidator, authService services.AuthService) AuthController {
+func NewAuthController(logger *logger.Logger, cfg *config.Config, validator schema.RequestValidator, authService services.AuthService) AuthController {
 	return authController{
 		logger:      *logger,
 		validator:   validator,
+		cfg:         cfg,
 		authService: authService,
 	}
 }
@@ -29,6 +33,7 @@ type authController struct {
 	logger      logger.Logger
 	validator   schema.RequestValidator
 	authService services.AuthService
+	cfg         *config.Config
 }
 
 func (a authController) GenerateNonce(w http.ResponseWriter, r *http.Request) {
@@ -73,54 +78,21 @@ func (a authController) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	siweMsg, err := domain.ParseSIWEMessage(req.Message)
+	verified, err := a.authService.VerifySignature(req.Message, req.Signature)
 	if err != nil {
-		a.logger.Error("Failed to parse message", err)
-		respondError(w, http.StatusInternalServerError, "Failed to parse message")
+		a.logger.Error("error: message verification failed %w", err)
+		respondError(w, http.StatusBadRequest, "message verification failed")
+		return
+	}
+	if !verified {
+		a.logger.Error(fmt.Sprintf("message %s is invalid", req.Message))
+		respondError(w, http.StatusBadRequest, "invalid message")
 		return
 	}
 
-	valid, err := domain.VerifySignature(req.Message, req.Signature, siweMsg.Address)
-	if err != nil || !valid {
-		respondError(w, http.StatusBadRequest, "Signature verification failed")
-		return
-	}
-
-	// Verify domain
-	expectedDomain := "localhost:3000"
-	if siweMsg.Domain != expectedDomain {
-		respondError(w, http.StatusBadRequest, "Invalid domain")
-		return
-	}
-
-	// Verify expiration
-	if siweMsg.ExpirationTime != "" {
-		expiry, err := time.Parse(time.RFC3339, siweMsg.ExpirationTime)
-		if err != nil {
-			respondError(w, http.StatusBadRequest, "Expiration time parsing failed")
-			return
-		}
-		if time.Now().After(expiry) {
-			respondError(w, http.StatusBadRequest, "Message has expired")
-			return
-		}
-	}
-
-	// Verify not before
-	if siweMsg.NotBefore != "" {
-		notBefore, err := time.Parse(time.RFC3339, siweMsg.NotBefore)
-		if err != nil {
-			respondError(w, http.StatusBadRequest, "Invalid message")
-			return
-		}
-		if time.Now().Before(notBefore) {
-			respondError(w, http.StatusBadRequest, "Invalid message")
-			return
-		}
-	}
+	a.logger.Info(fmt.Sprintf("message %s verified successfully", req.Message))
 
 	respondJSON(w, http.StatusOK, "Message is verified", domain.VerifyResponse{
-		Valid:   true,
-		Address: strings.ToLower(siweMsg.Address),
+		Valid: true,
 	})
 }

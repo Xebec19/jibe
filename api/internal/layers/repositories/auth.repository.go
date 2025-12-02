@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/Xebec19/jibe/api/internal/db"
@@ -13,6 +14,10 @@ import (
 
 type AuthRepository interface {
 	CreateNonce(addr string) (string, error)
+
+	// CheckNonce check if the given nonce exists in db and is valid. After validating,
+	// it saves the address of the user who used it
+	CheckNonce(nonce, addr string) (bool, error)
 }
 
 func NewAuthRepository(ctx context.Context, logger *logger.Logger, q *db.Queries) AuthRepository {
@@ -53,4 +58,25 @@ func (repo *authRepository) CreateNonce(addr string) (string, error) {
 	}
 
 	return repo.q.CreateNonce(repo.ctx, params)
+}
+
+func (repo *authRepository) CheckNonce(nonce, addr string) (bool, error) {
+
+	arg := db.ConsumeNonceParams{
+		EthAddress: pgtype.Text{Valid: true, String: addr},
+		Value:      nonce,
+	}
+
+	rows, err := repo.q.ConsumeNonce(repo.ctx, arg)
+
+	if err != nil {
+		return false, fmt.Errorf("nonce consumption failed %w", err)
+	}
+
+	if rows == 0 {
+		return false, fmt.Errorf("nonce not found")
+	}
+
+	return true, nil
+
 }

@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Port               string        `mapstructure:"PORT"`
 	DbConn             string        `mapstructure:"DB_CONN"`
+	Domain             string        `mapstructure:"DOMAIN"`
 	Env                string        `mapstructure:"ENV"`
 	MaxHeaderBytes     int           `json:"max_header_bytes"`
 	ReadTimeout        time.Duration `json:"read_timeout"`

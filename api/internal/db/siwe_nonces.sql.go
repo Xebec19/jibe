@@ -11,8 +11,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const consumeNonce = `-- name: ConsumeNonce :execrows
+UPDATE siwe_nonces SET used = TRUE, eth_address=$1
+WHERE value = $2 and expires_at > CURRENT_TIMESTAMP
+`
+
+type ConsumeNonceParams struct {
+	EthAddress pgtype.Text
+	Value      string
+}
+
+func (q *Queries) ConsumeNonce(ctx context.Context, arg ConsumeNonceParams) (int64, error) {
+	result, err := q.db.Exec(ctx, consumeNonce, arg.EthAddress, arg.Value)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const createNonce = `-- name: CreateNonce :one
-INSERT INTO siwe_nonces(value, eth_address, expires_at) 
+INSERT INTO siwe_nonces(value, eth_address, expires_at)
 values($1, $2, $3) RETURNING value
 `
 

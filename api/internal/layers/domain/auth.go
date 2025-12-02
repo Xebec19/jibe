@@ -19,9 +19,8 @@ type VerifyRequest struct {
 }
 
 type VerifyResponse struct {
-	Valid   bool   `json:"valid"`
-	Address string `json:"address,omitempty"`
-	Error   string `json:"error,omitempty"`
+	Valid bool   `json:"valid"`
+	Error string `json:"error,omitempty"`
 }
 
 // ParseSIWEMessage parses a SIWE message string
