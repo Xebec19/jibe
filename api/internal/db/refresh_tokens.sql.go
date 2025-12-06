@@ -38,3 +38,16 @@ func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshToken
 	err := row.Scan(&id)
 	return id, err
 }
+
+const revokeRefreshToken = `-- name: RevokeRefreshToken :execrows
+UPDATE refresh_tokens SET revoked_at = CURRENT_TIMESTAMP 
+WHERE token_hash = $1
+`
+
+func (q *Queries) RevokeRefreshToken(ctx context.Context, tokenHash string) (int64, error) {
+	result, err := q.db.Exec(ctx, revokeRefreshToken, tokenHash)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}

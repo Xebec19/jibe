@@ -27,3 +27,16 @@ func (q *Queries) CreateAccessToken(ctx context.Context, arg CreateAccessTokenPa
 	err := row.Scan(&jti)
 	return jti, err
 }
+
+const revokeAccessToken = `-- name: RevokeAccessToken :execrows
+UPDATE access_tokens SET revoked_at = CURRENT_TIMESTAMP 
+WHERE jti = $1
+`
+
+func (q *Queries) RevokeAccessToken(ctx context.Context, jti pgtype.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, revokeAccessToken, jti)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
