@@ -8,6 +8,25 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AccessToken struct {
+	Jti        pgtype.UUID
+	EthAddress string
+	CreatedAt  pgtype.Timestamp
+	ExpiresAt  pgtype.Timestamp
+	RevokedAt  pgtype.Timestamp
+}
+
+type RefreshToken struct {
+	ID         pgtype.UUID
+	EthAddress string
+	TokenHash  string
+	ExpiresAt  pgtype.Timestamp
+	RevokedAt  pgtype.Timestamp
+	CreatedAt  pgtype.Timestamp
+	DeviceInfo pgtype.Text
+	FamilyID   pgtype.UUID
+}
+
 type SchemaMigration struct {
 	Version int64
 	Dirty   bool

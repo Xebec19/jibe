@@ -18,6 +18,10 @@ type AuthRepository interface {
 	// CheckNonce check if the given nonce exists in db and is valid. After validating,
 	// it saves the address of the user who used it
 	CheckNonce(nonce, addr string) (bool, error)
+
+	CreateAccessToken(ethAddr string, exp time.Time) (string, error)
+
+	CreateRefreshToken(ethAddr, token_hash string, exp time.Time, device_info string) (string, error)
 }
 
 func NewAuthRepository(ctx context.Context, logger *logger.Logger, q *db.Queries) AuthRepository {
@@ -79,4 +83,41 @@ func (repo *authRepository) CheckNonce(nonce, addr string) (bool, error) {
 
 	return true, nil
 
+}
+
+// CreateAccessToken creates an access token record in the database and returns the token's JTI
+func (repo *authRepository) CreateAccessToken(ethAddr string, exp time.Time) (string, error) {
+
+	arg := db.CreateAccessTokenParams{
+		EthAddress: ethAddr,
+		ExpiresAt: pgtype.Timestamp{
+			Time:  exp,
+			Valid: true,
+		},
+	}
+
+	jti, err := repo.q.CreateAccessToken(repo.ctx, arg)
+
+	return jti.String(), err
+}
+
+// CreateRefreshToken creates a refresh token record in the database
+func (repo *authRepository) CreateRefreshToken(ethAddr, tokenHash string, exp time.Time, deviceInfo string) (string, error) {
+
+	arg := db.CreateRefreshTokenParams{
+		EthAddress: ethAddr,
+		TokenHash:  tokenHash,
+		ExpiresAt: pgtype.Timestamp{
+			Time:  exp,
+			Valid: true,
+		},
+		DeviceInfo: pgtype.Text{
+			String: deviceInfo,
+			Valid:  true,
+		},
+	}
+
+	id, err := repo.q.CreateRefreshToken(repo.ctx, arg)
+
+	return id.String(), err
 }

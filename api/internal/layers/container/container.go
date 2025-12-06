@@ -53,6 +53,6 @@ func (c *Container) SetupRepositories() {
 // initialize all services and save them in services
 func (c *Container) SetupServices() {
 
-	authSvc := services.NewAuthService(&c.Logger, c.AuthRepository)
+	authSvc := services.NewAuthService(c.Logger, &c.Cfg, c.AuthRepository)
 	c.AuthService = authSvc
 }

@@ -78,7 +78,7 @@ func (a authController) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	verified, err := a.authService.VerifySignature(req.Message, req.Signature)
+	verified, _, err := a.authService.VerifySignature(req.Message, req.Signature)
 	if err != nil {
 		a.logger.Error("error: message verification failed %w", err)
 		respondError(w, http.StatusBadRequest, "message verification failed")

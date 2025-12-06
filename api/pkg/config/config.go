@@ -12,6 +12,7 @@ type Config struct {
 	DbConn             string        `mapstructure:"DB_CONN"`
 	Domain             string        `mapstructure:"DOMAIN"`
 	Env                string        `mapstructure:"ENV"`
+	JwtSecret          string        `mapstructure:"JWT_SECRET"`
 	MaxHeaderBytes     int           `json:"max_header_bytes"`
 	ReadTimeout        time.Duration `json:"read_timeout"`
 	WriteTimeout       time.Duration `json:"write_timeout"`
@@ -30,6 +31,8 @@ func NewConfig(path string) (*Config, error) {
 		DbConn:             os.Getenv("DB_CONN"),
 		Env:                os.Getenv("ENV"),
 		Port:               os.Getenv("PORT"),
+		Domain:             os.Getenv("DOMAIN"),
+		JwtSecret:          os.Getenv("JWT_SECRET"),
 		MaxHeaderBytes:     1 << 20,
 		ReadTimeout:        10 * time.Second,
 		WriteTimeout:       10 * time.Second,
