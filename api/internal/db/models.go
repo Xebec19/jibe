@@ -23,7 +23,9 @@ type RefreshToken struct {
 	ExpiresAt  pgtype.Timestamp
 	RevokedAt  pgtype.Timestamp
 	CreatedAt  pgtype.Timestamp
-	DeviceInfo pgtype.Text
+	IpAddress  pgtype.Text
+	UserAgent  pgtype.Text
+	DeviceName pgtype.Text
 	FamilyID   pgtype.UUID
 }
 

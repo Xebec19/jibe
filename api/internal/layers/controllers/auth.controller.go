@@ -9,6 +9,7 @@ import (
 	"github.com/Xebec19/jibe/api/internal/common/schema"
 	"github.com/Xebec19/jibe/api/internal/layers/domain"
 	"github.com/Xebec19/jibe/api/internal/layers/services"
+	"github.com/Xebec19/jibe/api/internal/utils"
 	"github.com/Xebec19/jibe/api/pkg/config"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
@@ -78,7 +79,8 @@ func (a authController) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	verified, _, err := a.authService.VerifySignature(req.Message, req.Signature)
+	// Verify message signature
+	verified, addr, err := a.authService.VerifySignature(req.Message, req.Signature)
 	if err != nil {
 		a.logger.Error("error: message verification failed %w", err)
 		respondError(w, http.StatusBadRequest, "message verification failed")
@@ -91,6 +93,46 @@ func (a authController) VerifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.logger.Info(fmt.Sprintf("message %s verified successfully", req.Message))
+
+	// Generate JWT token
+	accessToken, err := a.authService.SignJWTToken(addr)
+	if err != nil {
+		a.logger.Error("error: JWT token signing failed %w", err)
+		respondError(w, http.StatusInternalServerError, SOMETHING_WENT_WRONG_MSG)
+		return
+	}
+
+	deviceInfo := domain.GetDeviceInfo(r)
+
+	// Create Refresh Token
+	refreshToken, err := a.authService.CreateRefreshToken(addr, deviceInfo.IP, deviceInfo.UserAgent, deviceInfo.Platform)
+	if err != nil {
+		a.logger.Error("error: refresh token creation failed %w", err)
+		respondError(w, http.StatusInternalServerError, SOMETHING_WENT_WRONG_MSG)
+		return
+	}
+
+	isProd := utils.IsProductionEnv(a.cfg.Env)
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   isProd,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   a.cfg.AccessTokenExpiry,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   isProd,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   a.cfg.RefreshTokenExpiry,
+	})
 
 	respondJSON(w, http.StatusOK, "Message is verified", domain.VerifyResponse{
 		Valid: true,

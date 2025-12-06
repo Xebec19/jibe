@@ -1,7 +1,12 @@
 package domain
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -137,4 +142,42 @@ func VerifySignature(message, signature, expectedAddress string) (bool, error) {
 
 	// Compare addresses (case-insensitive)
 	return strings.EqualFold(recoveredAddr.Hex(), expectedAddress), nil
+}
+
+// GenerateRefreshToken function to create a secure random refresh token
+func GenerateRefreshToken() (string, error) {
+	bytes := make([]byte, 32) // 256 bits
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(bytes), nil
+}
+
+// HashToken function to create SHA-256 hash of a string
+func HashToken(data string) string {
+	hash := sha256.Sum256([]byte(data))
+	return hex.EncodeToString(hash[:])
+}
+
+type DeviceInfo struct {
+	UserAgent string
+	IP        string
+	Platform  string
+}
+
+func GetDeviceInfo(r *http.Request) DeviceInfo {
+	// Get IP address
+	ip := r.Header.Get("X-Forwarded-For") // if behind proxy/load balancer
+	if ip == "" {
+		ip = r.Header.Get("X-Real-IP")
+	}
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+
+	return DeviceInfo{
+		UserAgent: r.Header.Get("User-Agent"),
+		IP:        ip,
+		Platform:  r.Header.Get("Sec-Ch-Ua-Platform"), // modern browsers send this
+	}
 }

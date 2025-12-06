@@ -12,15 +12,17 @@ import (
 )
 
 const createRefreshToken = `-- name: CreateRefreshToken :one
-INSERT INTO refresh_tokens(eth_address, token_hash, expires_at, device_info)
-VALUES($1, $2, $3, $4) RETURNING id
+INSERT INTO refresh_tokens(eth_address, token_hash, expires_at, ip_address, user_agent, device_name)
+VALUES($1, $2, $3, $4, $5, $6) RETURNING id
 `
 
 type CreateRefreshTokenParams struct {
 	EthAddress string
 	TokenHash  string
 	ExpiresAt  pgtype.Timestamp
-	DeviceInfo pgtype.Text
+	IpAddress  pgtype.Text
+	UserAgent  pgtype.Text
+	DeviceName pgtype.Text
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (pgtype.UUID, error) {
@@ -28,7 +30,9 @@ func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshToken
 		arg.EthAddress,
 		arg.TokenHash,
 		arg.ExpiresAt,
-		arg.DeviceInfo,
+		arg.IpAddress,
+		arg.UserAgent,
+		arg.DeviceName,
 	)
 	var id pgtype.UUID
 	err := row.Scan(&id)

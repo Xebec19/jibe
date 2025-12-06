@@ -11,10 +11,6 @@ import (
 	"github.com/Xebec19/jibe/api/pkg/logger"
 )
 
-const (
-	ACCESS_TOKEN_DURATION time.Duration = 30 * time.Minute
-)
-
 type AuthService interface {
 	// CreateNonce create a random nonce, saves it in db and return it
 	CreateNonce(addr string) (string, error)
@@ -25,6 +21,9 @@ type AuthService interface {
 
 	// SignJWTToken signs a jwt token
 	SignJWTToken(addr string) (string, error)
+
+	// CreateRefreshToken creates and stores a refresh token and returns the plain token
+	CreateRefreshToken(addr, ipAddress, userAgent, deviceName string) (string, error)
 }
 
 func NewAuthService(logger logger.Logger, cfg *config.Config, authRepo repositories.AuthRepository) AuthService {
@@ -104,7 +103,7 @@ func (svc *authService) VerifySignature(message, signature string) (bool, string
 
 func (svc *authService) SignJWTToken(addr string) (string, error) {
 
-	jti, err := svc.authRepo.CreateAccessToken(addr, time.Now().Add(ACCESS_TOKEN_DURATION))
+	jti, err := svc.authRepo.CreateAccessToken(addr, time.Now().Add(time.Duration(svc.cfg.AccessTokenExpiry)*time.Second))
 	if err != nil {
 		return "", fmt.Errorf("access token creation failed %w", err)
 	}
@@ -113,7 +112,7 @@ func (svc *authService) SignJWTToken(addr string) (string, error) {
 		Iss: svc.cfg.Domain,
 		Sub: addr,
 		Aud: svc.cfg.Domain,
-		Exp: time.Now().Add(ACCESS_TOKEN_DURATION),
+		Exp: time.Now().Add(time.Duration(svc.cfg.AccessTokenExpiry) * time.Second),
 		Iat: time.Now(),
 		Nbf: time.Now(),
 		Jti: jti,
@@ -122,4 +121,24 @@ func (svc *authService) SignJWTToken(addr string) (string, error) {
 	token, err := jwt.Token(claims, []byte(svc.cfg.JwtSecret))
 
 	return token, err
+}
+
+func (svc *authService) CreateRefreshToken(addr, ipAddress, userAgent, deviceName string) (string, error) {
+
+	refreshToken, err := domain.GenerateRefreshToken()
+	if err != nil {
+		return "", fmt.Errorf("refresh token generation failed %w", err)
+	}
+
+	exp := time.Now().Add(time.Duration(svc.cfg.RefreshTokenExpiry) * time.Second)
+
+	// Hash the refresh token before storing
+	tokenHash := domain.HashToken(refreshToken)
+
+	_, err = svc.authRepo.CreateRefreshToken(addr, tokenHash, exp, ipAddress, userAgent, deviceName)
+	if err != nil {
+		return "", fmt.Errorf("refresh token creation failed %w", err)
+	}
+
+	return refreshToken, nil
 }

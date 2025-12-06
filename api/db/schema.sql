@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS refresh_tokens(
     expires_at TIMESTAMP NOT NULL,
     revoked_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW(),
-    device_info VARCHAR(255),          -- optional: track devices
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    device_name VARCHAR(255),  -- e.g., "Chrome on Windows"
     family_id UUID                      -- optional: for rotation detection
 );

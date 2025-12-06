@@ -19,9 +19,11 @@ type AuthRepository interface {
 	// it saves the address of the user who used it
 	CheckNonce(nonce, addr string) (bool, error)
 
+	// CreateAccessToken creates an access token record in the database and returns the token's JTI
 	CreateAccessToken(ethAddr string, exp time.Time) (string, error)
 
-	CreateRefreshToken(ethAddr, token_hash string, exp time.Time, device_info string) (string, error)
+	// CreateRefreshToken creates a refresh token record in the database
+	CreateRefreshToken(ethAddr, tokenHash string, exp time.Time, ipAddress, userAgent, deviceName string) (string, error)
 }
 
 func NewAuthRepository(ctx context.Context, logger *logger.Logger, q *db.Queries) AuthRepository {
@@ -85,7 +87,6 @@ func (repo *authRepository) CheckNonce(nonce, addr string) (bool, error) {
 
 }
 
-// CreateAccessToken creates an access token record in the database and returns the token's JTI
 func (repo *authRepository) CreateAccessToken(ethAddr string, exp time.Time) (string, error) {
 
 	arg := db.CreateAccessTokenParams{
@@ -101,8 +102,7 @@ func (repo *authRepository) CreateAccessToken(ethAddr string, exp time.Time) (st
 	return jti.String(), err
 }
 
-// CreateRefreshToken creates a refresh token record in the database
-func (repo *authRepository) CreateRefreshToken(ethAddr, tokenHash string, exp time.Time, deviceInfo string) (string, error) {
+func (repo *authRepository) CreateRefreshToken(ethAddr, tokenHash string, exp time.Time, ipAddress, userAgent, deviceName string) (string, error) {
 
 	arg := db.CreateRefreshTokenParams{
 		EthAddress: ethAddr,
@@ -111,8 +111,10 @@ func (repo *authRepository) CreateRefreshToken(ethAddr, tokenHash string, exp ti
 			Time:  exp,
 			Valid: true,
 		},
-		DeviceInfo: pgtype.Text{
-			String: deviceInfo,
+		IpAddress: pgtype.Text{String: ipAddress, Valid: true},
+		UserAgent: pgtype.Text{String: userAgent, Valid: true},
+		DeviceName: pgtype.Text{
+			String: deviceName,
 			Valid:  true,
 		},
 	}
