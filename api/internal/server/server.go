@@ -4,57 +4,68 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
-	"time"
 
-	"github.com/Xebec19/jibe/api/internal/container"
-	"github.com/Xebec19/jibe/api/internal/container/config"
+	"github.com/Xebec19/jibe/api/internal/db"
+	"github.com/Xebec19/jibe/api/internal/layers/container"
 	"github.com/Xebec19/jibe/api/internal/routes"
+	"github.com/Xebec19/jibe/api/pkg/config"
 	"github.com/Xebec19/jibe/api/pkg/logger"
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Server struct {
-	Srv *http.Server
+	Container container.Container
+	Srv       *http.Server
 }
 
-func NewServer() (*Server, error) {
+func NewServer(ctx context.Context, cfg *config.Config) (*Server, error) {
 
 	logger := logger.NewLogger(slog.LevelInfo)
 
-	cfg, err := config.NewConfig("../../.env")
+	pool, err := pgxpool.New(context.TODO(), cfg.DbConn)
 	if err != nil {
-		logger.Error("configuration setup failed")
-		return nil, err
+		logger.Error("DB Pool creation failed!", "error", err)
 	}
 
-	c := container.NewContainer(cfg, logger)
+	q := db.New(pool)
 
-	// todo init services and repositories in container
+	c := container.NewContainer(ctx, cfg, logger, pool, q)
+
+	c.SetupRepositories()
+	c.SetupServices()
 
 	r := mux.NewRouter()
 
 	routes.RegisterRoutes(r, c)
 
 	srv := &http.Server{
-		Addr:         ":" + cfg.Port,
-		Handler:      r,
-		ReadTimeout:  time.Duration(60 * time.Second),
-		WriteTimeout: time.Duration(60 * time.Second),
-		IdleTimeout:  time.Duration(60 * time.Second),
+		Addr:           ":" + cfg.Port,
+		Handler:        r,
+		ReadTimeout:    cfg.ReadTimeout,
+		WriteTimeout:   cfg.WriteTimeout,
+		IdleTimeout:    cfg.IdleTimeout,
+		MaxHeaderBytes: cfg.MaxHeaderBytes,
 	}
 
 	return &Server{
-		Srv: srv,
+		Container: c,
+		Srv:       srv,
 	}, nil
 }
 
 func (s *Server) Run() error {
 
+	s.Container.Logger.Info("Server started", "PORT", s.Container.Cfg.Port)
+
 	return s.Srv.ListenAndServe()
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	// todo cleanup
+
+	s.Container.Dbpool.Close()
+
 	s.Srv.Close()
+
 	return nil
 }
